@@ -1,0 +1,8 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+export default function Signup({ onSignup }) {
+  const [form,setForm]=useState({name:'',email:'',password:''}); const [error,setError]=useState(''); const navigate=useNavigate();
+  const submit=e=>{e.preventDefault(); const valid=/^[A-Za-z0-9]{1,6}$/.test(form.password); if(!valid){setError('Password must contain only letters/numbers and be maximum 6 characters.');return;} const users=JSON.parse(localStorage.getItem('16thHoleUsers')||'[]'); if(users.some(u=>u.email===form.email)){setError('An account with this email already exists.');return;} const user={name:form.name,email:form.email,password:form.password}; localStorage.setItem('16thHoleUsers',JSON.stringify([...users,user])); onSignup({name:user.name,email:user.email}); navigate('/collection');};
+  return <div className="auth-page section-pad"><div className="auth-card"><p className="eyebrow">MEMBERSHIP</p><h1>Come closer.</h1><p>Create a simple membership for your private collection.</p><form onSubmit={submit}><label>Name<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Email<input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></label><label>Password<input type="password" required maxLength="6" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/><small>Maximum 6 letters or numbers.</small></label>{error&&<p className="form-error">{error}</p>}<button className="dark-button">Create membership</button></form><p className="auth-switch">Already a member? <Link to="/login">Log in</Link></p></div></div>;
+}
